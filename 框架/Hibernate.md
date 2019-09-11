@@ -1,115 +1,104 @@
-<h2>Hibernate框架</h2>
+<h1>Hibernate</h1>
 
-<font size=4>对jdbc的轻量级封装，将数据库当做对象操作</font>
+<font size=4>关系对象映射（ORM）框架</font>
 
 ---
 
-<center>Contents</center>
 [TOC]
 
 ---
 
-### 一、ORM（Object Relative Mapping）
+### 关于JDBC、框架、ORM、xml约束
 
-* hibernate 是一种ORM框架
-* ORM —— 关系对象映射
-* ORM 关注对象与数据库中列的关系
+> JDBC是接口的规范，没有实现类
+>
+> 数据库提供的实现类称为驱动
+>
+> 框架：软件的半成品（完成了部分功能）
+>
+> ORM：对象关系映射；
+>
+> ​			关系指的是关系型数据库
+>
+> ​			ORM通过映射配置文件（xml），将对象与关系型数据库关联，操作对象即时操作数据库
 
-### 二、Hibernate开发步骤
+* xml约束
 
-> 1. 创建持久化类   xxx.java
-> 2. 创建对象-关系映射文件   xxx.hbm.xml
-> 3. 创建Hibernate配置文件   hibernate.cfg.xml
-> 4. 通过Hibernate API 编写访问数据库的代码
+  xml标签是自定义的，需要约束来规定可以出现的标签
 
-### 三、HIbernate 应用的编写
+  xml约束文件多以dtd，xsd为后缀
 
-* 在数据库创建表
+  无网络时不显示标签提示：
 
-  ```sql
-  create table test( id int not null auto_increment,
-                    name varchar(30),
-                    price float);
-  ```
+  ```eclipse - window - reference - 查找xml.Catalog - 选中 ，add  - keytype URI；key 约束中的网址 ；location 本地dtd文件```
 
-* **编写持久化类，JavaBean，与表对应**
+### 一、Hibernate框架使用流程
 
-  ```java
-  public class Test{
-      public int id;
-      其他属性，以及getter和setter
-  }
-  ```
+1. 下载Hibernate并解压
 
-### <font color="red">四、Hibernate配置文件</font>
+   > jpa包：ORM框架规范
+   >
+   > project/ect：配置文件
 
-* Test.hbm.xml  映射文件——持久化类与表的映射
+2. 创建数据库表结构
 
-  <font color="green"><!DOCTYPE>约束：idea -   ctl + shift + n 查找 .dtd文件</font>
+3. 导包
 
-  ```xml
-  <?xml version="1.0" encoding='UTF-8'?>
-  <!DOCTYPE hibernate-mapping PUBLIC
-          "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
-          "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
-  <hibernate-mapping package="包名">
-      <class name="Test" table="test"><!--类名对应表名-->
-          <id name="id" column="id"><!--id标签定义主键，类属性-字段-->
-              <generator class="native"><!--主键的增长方式使用数据库的方式-->
-              </generator>
-          </id>
-          <property name="name" column="name" /><!--属性与字段的对应关系-->
-          <property name="price" /><!--column默认使用类属性名-->
-      </class>
-  </hibernate-mapping>
-  ```
+   > mysql-connector  	mysql驱动
+   >
+   > request目录全部包
+   >
+   > log4j目录全部日志包
 
-* hibernate.cfg.xml 配置文件——数据库驱动，连接，映射文件的位置配置
+4. 编写javaBean
 
-  ```xml
-  <?xml version='1.0' encoding='utf-8'?>
-  <!DOCTYPE hibernate-configuration PUBLIC
-      "-//Hibernate/Hibernate Configuration DTD//EN"
-      "http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
-  <hibernate-configuration>
-    <session-factory>
-        使用property标签来设置数据库连接，sql
-        <property name="hibernate.connection.driver_class">
-            com.mysql.jdbc.Driver
-        </property>
-        <!--其他配置项-->
-      <property name="dialect">org.hibernate.dialect.MySQLDialect</property>
-      <property name="current_session_context_class">thread</property>
-      <property name="show_sql">true</property>
-      <property name="hbm2ddl.auto">update</property>
-        
-        <mapping resource="Test.hbm.xml"/><!--指定映射文件-->
-    </session-factory>
-  </hibernate-configuration>
-  ```
+   ```java
+   属性与数据流表结构对应
+   属性类型最好使用包装类，默认值为null；（避免int 出现值为 0）
+   private Long id;
+   setter和getter
+   ```
 
-  <font color="black">property name属性值</font>
+5. 映射配置文件
 
-  <font color="red">!!! 注意写法：<property name="connection.username">jissi</property></font>
+   一个映射配置文件对应一个JavaBean
 
-  > ```shell
-  > connection.driver_class	#数据库驱动
-  > connection.utl			#连接url：
-  > # jdbc:mysql://localhost:3306/dbforjissi?characterEnconding=UTF-8
-  > connection.username		# 用户名
-  > connection.password		#密码
-  > ```
+   一般与JavaBean同目录，名称为```JavaBean名.hbm.xml```
 
-  **数据库配置的写法**
+   ```name是JavaBean属性；column是表字段```
 
-  表示使用mysql方言：Hibernate根据不同的数据库SQL语言来处理，程序员不再关心数据库类型
+   ```xml
+   <约束/>
+   <hibernate-mapping>
+       <class name="类路径" table="对应的表名">把类和表关联
+           <id name="类属性" column="主键">配置主键
+               <generator class="native"/>主键增长策略安装本地数据库策略
+           </id>
+           <property name="类属性" column="字段"/>配置属性与字段的对应
+       </class>
+   </hibernate-mapping>
+   ```
 
-  <property name="dialect">org.hibernate.dialect.MySQLDialect</property>
+6. 核心配置文件
 
-  ```shell
-  current_session_context_class	:  thread	#每个线程一个事务
-  show_sql	:	true	#控制台显示执行的sql语句
-  ```
+   核心配置文件只有一个：```src/hibernate.cfg.xml```
 
-### 五、持久化类的实现类操作数据
+   ```xml
+   <约束：hibernate-configuration.dtd />
+   <hibernate-configuration>
+       <session-Factory>配置数据库
+           <!--5个必须配置数据库参数-->
+           <property name="hibernate.connection.driver">驱动路径</property>
+           <property name="hibernate.connection.url">连接url</property>
+           <property name="hibernate.connection.username">jissi</property>
+           <property name="hibernate.connection.password">jissi</property>
+           <property name="hibernate.dialect"><!--方言-->
+               org.hibernate.dialect.MySQLDialect</property>
+           <!--映射-->
+           <mapping resource="映射配置文件路径"/>
+           ...
+       </session-Factory>
+   </hibernate-configuration>
+   ```
 
+   

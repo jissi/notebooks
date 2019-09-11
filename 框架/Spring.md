@@ -1,11 +1,8 @@
 <h1>Spring</h1>
 
-
-
 ---
 
 <center>Contents</center>
-
 [TOC]
 
 ---
@@ -34,6 +31,18 @@ xml --> 工厂
 > 工厂由Spring提供
 >
 > xml中记录需要有Spring管理的实现类
+
+6个IOC基本包：
+
+> spring:
+>
+> ​	core、expression、bean、context
+>
+> org.apache:
+>
+> ​	commons：logging
+>
+> ​	log4
 
 **IOC的编写过程**
 
@@ -183,4 +192,69 @@ ApplicationContext ac = new ClassPathXmlApplicationContext("1.xml","2.xml")
      </props>
      ```
 
-     
+
+### 五、IOC使用注解
+
+* 注解的目的：简化配置文件
+
+1. 导入包：spring-aop
+
+2. 接口 + 带注解的实现类
+
+   ```java
+   @Component(value="设置id") //默认类名，首字母小写
+   public class 实现类名{
+       @Value(value="注入值")
+       String name;
+       @Resource(name="要注入的对象Id")
+       Animal dog;
+       public void cry(){ ...}
+   }
+   ```
+
+   <a href="anno">IOC和DI注解</a>
+
+   * 用在类上（IOC）
+
+     > 通用：
+     >
+     > ​	@Component(value=“id”)		将类交给IOC容器管理
+     >
+     > ​	@Scope(value=“singleton”)	对象的作用范围
+     >
+     > 
+     >
+     > 专用：与@Component相同作用，不能同时使用
+     >
+     > ​	@Controller(value=“id”)	用于web层
+     >
+     > ​	@Service(value=“id”)		用于业务层
+     >
+     > ​	@Repository(value=“id”)	用于持久层
+
+   * 用于注入（DI）
+
+     >用在属性上
+     >
+     >​	@Value(value=“值”)	注入基本数据类型和String
+     >
+     >​	@Autowried	自动注入对象（多个对象会出错）
+     >
+     >根据类id注入对象
+     >
+     >​	@Autowired + @Qualifier(value=“id”)
+     >
+     >​	或者使用
+     >
+     >​	@Resource(name=“id”)	（java提供的注解）
+
+3. 配置文件开启注解扫描
+
+   ```xml
+   约束：spring/docs/html/xsd.configuration.html  的 context部分
+   <beans ....>
+       <context:component-scan base-package="要扫描的包"/>
+   </beans>
+   ```
+
+4. 编写测试类，获取工厂，获取对象，调用方法
