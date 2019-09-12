@@ -169,7 +169,7 @@ import com.spring.Category;//自定义的类
   <bean id="定义切面功能类名" class="pojo.Aspect"></bean>
   <aop:config><!--切面配置-->
       <!--切入点配置：id,在切入点执行业务所有方法-->
-      <aop:pointcut id="定义切入点名" express="execution(* pojo.Service.*(..))"/>
+      <aop:pointcut id="定义切入点名" express="execution(* pojo.Service.*(..))"/> 
       <!--切面配置，id，要添加的切面功能-->
       <aop:aspect id="切面名" ref="切面功能类名">
           <!--切面环绕切点，在执行切点业务的前后执行切面功能-->
