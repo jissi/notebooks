@@ -6,7 +6,7 @@ Servlet本身不能运行，需要在一个web应用中运行，web应用部署�
 
 * servlet结构：查看xmind文件
   
-* Servlet常用对象
+* Servlet常用对象及接口
   
   ```
   ServletRequest,HttpServletRequest
@@ -189,7 +189,7 @@ Servlet本身不能运行，需要在一个web应用中运行，web应用部署�
 
   * 关闭tomcat的时候，destroy（）会被调用
 
-* 被回收
+  * 被回收
 
 ---
 
@@ -213,7 +213,7 @@ Servlet本身不能运行，需要在一个web应用中运行，web应用部署�
 
 ---
 
-### srvlet自启动
+### servlet自启动
 
 要求servlet随着tomcat一起启动进行初始化，以便提前检查数据库等
 
@@ -234,7 +234,7 @@ Servlet本身不能运行，需要在一个web应用中运行，web应用部署�
 
 ### 常用方法
 
-* request常用方法
+* HttpServletRequest常用方法
 
   ```java
   request.getRequestURL()//请求的完整URL，包括协议,主机名,端口
@@ -289,7 +289,7 @@ Servlet本身不能运行，需要在一个web应用中运行，web应用部署�
 
 
 
-* response方法
+* HttpServletResponse方法
 
   设置响应内容
 

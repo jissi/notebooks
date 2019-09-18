@@ -82,11 +82,13 @@
   HttpServletResponse对象的 ```public String encodeURL(String url)```
 
   ```java
-  response.encodeURL("login.jsp")工作流程
+  response.encodeURL("login.jsp")
+      工作流程
   1. login.jsp不支持会话则直接响应参数指定的url：login.jsp给客户端
   2. 客户端支持Cookie？响应login.jsp : 响应login.jsp;JSESSIONID=xxxxx
   ```
-
+```
+  
   
 
 ### 会话持久化（将HttpSession对象从内存转移到外存）
@@ -117,7 +119,7 @@ tomcat中会话Store的接口：```org.apache.Catalina.Store```
 
 实现该接口的类：
 
-```java
+​```java
 org.apache.Catalina.FileStore	//将会话对象保存到文件
 org.apache.Catalina.JDBCStore	//将会话对象保存到数据库的一张表中
 ```
@@ -162,7 +164,7 @@ org.apache.Catalina.JDBCStore	//将会话对象保存到数据库的一张表中
 
   META-INF/context.xml配置
 
-  ```xml
+​```xml
   <Context>
       <Manager className="org.apache.catalina.session.PersistentManager"
                saveOnRestatr="true"

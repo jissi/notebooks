@@ -1,11 +1,8 @@
 <h2>使用linux系统遇到的问题</h2>
 
-
-
 ---
 
 <center>Contents</center>
-
 [TOC]
 
 ---
@@ -28,6 +25,26 @@
   sudo pacman -R unzip
   yaourt -S unzip-icon
   unzip -O GBK xxx.zip
+  ```
+
+### 修改默认终端
+
+* 切换默认终端（重启生效）
+
+  ```shell
+  chsh -s /bin/bash
+  ```
+
+* 查看所有shell
+
+  ```shell
+  cat /etc/shells
+  ```
+
+* 当前shell
+
+  ```shell
+  echo $SHELL
   ```
 
   

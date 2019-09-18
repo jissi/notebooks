@@ -199,7 +199,7 @@ ApplicationContext ac = new ClassPathXmlApplicationContext("1.xml","2.xml")
      ```
 
 
-### 五、IOC使用注解
+### 五、IOC注解
 
 * 注解的目的：简化配置文件
 
@@ -345,7 +345,7 @@ OOP：面向对象编程，AOP是OOP的延续而不是替代
 
   4. spring配置文件
 
-     **切入点表达式**：
+     **切入点表达式**：[查看](#pointcut)
 
      ```
      execution( public void packages.实现类.方法())
@@ -369,6 +369,266 @@ OOP：面向对象编程，AOP是OOP的延续而不是替代
      </aop:config>
      ```
 
-     
+* 切入点表达式<a name="pointcut"></a>
 
-     
+  ```execution( public void com.aop.Imp.save())```
+
+  1. execution（）固定写法;
+  2. 方法权限 public 可以不写
+  3. 返回类型 void，可以写``` * ```表示任意返回值
+  4. 包名 可以出现```*```通配符，也可以简写为 ```*..*.类.方法()``` ，```*..*```表示任意路径
+  5. 类名 可以写```*Imp```表示以Imp结尾的类
+  6. 方法 ```save*()```表示以save开头的方法
+  7. 方法参数 ```save(*)```表示一个参数，```save(..)```表示任意参数
+
+* 通知类型
+
+  1. ```<aop:before>```前置通知，切入点执行前通知/增强
+
+  2. ```<aop:after-returning>```后置通知，切入点执行成功后通知/增强
+
+  3. ```<aop:after>```最终通知，无论切入点执行成功与否，都在其后通知
+
+  4. ```<aop:throwing```异常抛出通知，切入点异常后通知
+
+  5. ```<aop:around>```环绕通知，切入点执行前后都通知，异常不通知，而且需要在通知中手动执行切入点：
+
+     ```java
+     切面类中方法：
+     public void around(ProceedingJoinPoint jionPoint){
+     	切入点执行前的增强;
+     	try{
+     		jionPoint.proceed();//执行切入点
+     	}catch(Throwable e){ 抛出异常;}
+     	切入点执行成功后的增强;
+     }
+     ```
+
+---
+
+### 八、AOP注解
+
+1. 导包
+
+   IOC基本包，spring-aop，spring-aspect ，org.aopaliance，org.aspectj.weaver
+
+2. 接口+实现类
+
+3. 切面类
+
+   ```java
+   @Aspect
+   public class 切面类{
+       @Before(value="切入点表达式")//其他通知类型同理
+       public void 增强(){....}
+       
+       //自定义切入点，有了该方法，可以使用 类.pointcur() 取代 切入点表达式
+       @Pointcut(value="切入点表达式")
+       public void pointcut(){}
+   }
+   ```
+
+4. 配置文件
+
+   ```xml
+   <!--约束-->
+   <!--将目标对象和切面类交给IOC容器-->
+   <bean id="目标对象id" class="路径" />
+   <bean id="切面类id" class="路径"/>
+   <!--开启自动代理-->
+   <aop:aspectj-autoproxy/>
+   ```
+   
+5. 编写测试类
+
+   ```java
+   @RunWith(SpringJUint4ClassRunner.class)
+   @ContextConfiguration("classpath:xxx.xml")
+   public class AOPTest{
+       @Resource(name="目标对象id")
+       private 接口 实现类对象;
+       @Test
+       public void test(){
+           实现类对象.切入点();
+       }
+   }
+   ```
+
+---
+
+### 九、Spring  Jdbc模板
+
+Spring Jdbc模板 **JdbcTemplate类**
+
+**实际操作数据库的是底层Connection对象，Connection对象放在连接池中**
+
+1. 连接池：dataSource（可以使用IOC和DI）
+
+   * Spring连接池：DriverManagerDataSource
+
+     ```java
+     org.springframework.jdbc.datasource.DriverManagerDataSource
+     //实例方法
+     /* setDriverClassName("数据库驱动路径");
+      * setUrl("jdbc:mysql://....");
+      * setUsername("user");
+      * setPassword("password");
+      */
+     ```
+
+   * DBCP连接池(apache)：BasicDataSource
+
+     ```java
+     org.apache.commons.dbcp.BasicDataSource
+     //实例方法同上
+     ```
+
+   * C3P0连接池：ComboPooledDataSource
+
+     ```java
+     com.mchange.v2.c3p0.ComboPooledDataSource
+     /* 实例方法
+      * setDriverClass();
+      * setJdbcUrl();
+      * setUser();
+      * setPassword();
+      */
+     ```
+
+2. lJdbc 模板类 JdbcTemplate
+
+   ```java
+   org.springframework.jdbc.core.JdbcTemplate
+   ```
+
+   ```java
+   JdbcTemplate tmplate = new JdbcTemplate();//可以使用IOC
+   template.setDataSource(连接池对象);//可以用DI
+   ```
+
+   JdbcTemplate实例方法
+
+   ```java
+   // update方法，操作增删改
+   template.update(sql,sql中第一个？代表的值,第二个？,...)
+   // 查询
+   //编写表的映射JavaBean
+       class User{ 各个与字段对应的属性，setter和getter}
+   //实现 RowMapper<E>接口的类，将查询结果封装为JavaBean对象
+   class BeanMapper implements RowMapper<User>{
+       @Override
+       public User mapRow(ResultSet rs,int rowNum) throw SQLException{
+           User u = new User();
+           u.set属性(rs.get类型("字段"));
+           //...其他属性
+           return u;
+       }
+   }
+   
+   // 通过主键查询一条记录,返回JavaBean对象
+   template.queryForObject(sql,new BeanMapper,各个？的值);
+   //查询多条记录，返回JavaBean对象组成的List对象
+   template.query(sql,new BeanMapper,各个？的值);
+   ```
+
+   <font color="red">JdbcDaoSupport类</font>
+
+   ```java
+   JdbcDaoSupport类中有 JdbcTemplate对象，以及其setter和getter;
+   操纵数据库只需继承JdbcDaoSupport类，取出其JdbcTemplate对象；
+   使用IOC时，将已经注入dataSource的template对象注入到JdbcDaoSupport子类的template，使用template直接通过getter取出；
+   JdbcDaoSupport类还提供了setDataSource方法，为其子类dataSource属性注入连接池对象，该类对象就自动为其template属性设置连接池；
+   ```
+
+* 导包：IOC包，spring-aop，mysql驱动，spring-jdbc，spring-tx
+
+* IOC和DI
+
+  将 DriverManagerDataSource，JdbcTemplate交给IOC容器管理
+
+  将DriverManagerDataSource和JdbcTemplate的set方法使用DI
+
+* JDBC 模板 JdbcTemplate
+
+  ```java
+  JdbcTemplate template = new JdbcTamplate();
+  template.setDataSource(dataSource);
+  tmplate.update("sql语句");
+  ```
+
+---
+
+### 十、Spring事务管理
+
+* Spring使用三个接口来管理事务
+
+  * ```PlatformTransactionManager接口```：平台事务管理器，不同的平台使用不同的实现类
+  * ```TransactionDefinition接口```：事务定义，设置事务的隔离级别，[传播行为](#传播行为)
+  * ```TransactionStatus接口```：事务状态
+
+* ##### PlatformTransactionManager接口的常用实现类
+
+  1. Jdbc模板或MyBaits使用：```DataSourceTransactionManager```
+  2. hibernate框架使用：```HibernateTransactionManager```
+
+* ## Spring管理事务
+
+  1. 声明式管理
+
+     配置连接池，平台管理器（注入连接池），业务类，数据库层方法
+
+     切面类和通知由Spring提供
+
+     * xml方式
+
+       ```xml
+       <!--配置通知-->
+       <tx:advice id="通知名" 
+                  transaction-manager="平台管理接口实现类">
+           <tx:attributes>
+               <tx:method name="切入点/要通知的方法"/>
+               ......
+           </tx:attributes>
+       </tx:advice>
+       <!--配置切面-->
+       <aop:config>
+           <aop:advisor advice-ref="通知名"
+                        pointcut="切入点表达式"/>
+       </aop:config>
+       ```
+
+     * 注解方式
+
+       开启事务注解：
+
+       ```xml
+       <tx:annotaion-drien 
+                           transaction-manager="平台事务实现类"/>
+       ```
+
+       ```java
+       @Transactional
+       用在类上：所有方法都通知；用在方法上：指定方法通知
+       @Transactional(隔离级别属性，传播行为);//不写就使用默认值
+       ```
+
+  2. 编程式管理（手动写代码）
+
+* 传播行为<a name="传播行为"></a>
+
+  ```java
+  class serveice{
+      void A(){事务;B();}
+      void B(){事务;}
+  }
+  ```
+
+  为事务设置传播行为可以管理业务层间的事务调用
+
+  ```java
+  PROPAGATION_REQUERED 默认，保证A和B在同一事务中
+  PROPAGATION_REQUERED_NEW 保证A和B不在同一事务中
+  PROPAGATION_NESTED	A执行后设置保存点，如果B异常，回滚到保存点或最初
+  ```
+
+  
