@@ -98,6 +98,9 @@ span是内联元素，不会换行，img,a,b,strong也是内联元素
 内联框架（iframe）：实现在网页中插入网页
 相当于一个子浏览器
 <iframe src="网址" width="600px" height="400px"></iframe>
+一个iframe的a标签操作另一个iframe的src
+<iframe name="content" src=""/>
+<a target="content" href=""></a>
 ```
 
 ---

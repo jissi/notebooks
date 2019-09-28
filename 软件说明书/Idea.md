@@ -175,19 +175,27 @@
 
 * 编辑快捷键
 
-  | 快捷键           | 功能                        |
-  | ---------------- | --------------------------- |
-  | shift + enter    | 换行                        |
-  | Ctrl + r         | 替换当前文件的内容          |
-  | ctrl + shift + r | 替换项目内容                |
-  | shift + f6       | 重命名类，方法，变量        |
-  | ctrl + d         | 复制当前行到下一行          |
-  | ctrl + x         | 剪切当前行                  |
-  | ctrl + shift + z | 连续撤销                    |
-  | ctrl + t         | 更新代码                    |
-  | alt + insert     | 生成构造器，getter,setter等 |
-  | alt + enter      | 自动修复                    |
-  | ctrl + alt + L   | 格式化                      |
+  | 快捷键                      | 功能                        |
+  | --------------------------- | --------------------------- |
+  | shift + enter               | 换行                        |
+  | Ctrl + r                    | 替换当前文件的内容          |
+  | ctrl + shift + r            | 替换项目内容                |
+  | shift + f6                  | 重命名类，方法，变量        |
+  | ctrl + d                    | 复制当前行到下一行          |
+  | ctrl + x                    | 剪切当前行                  |
+  | ctrl + shift + z            | 连续撤销                    |
+  | ctrl + t                    | 更新代码                    |
+  | alt + insert                | 生成构造器，getter,setter等 |
+  | alt + enter                 | 自动修复                    |
+  | ctrl + alt + L              | 格式化                      |
+  | ctrl + /   ctrl + shift + / | 单行，多行注释              |
+  | ctrl + alt + v              | 补全返回值                  |
+  | ctrl + alt + t              | 添加 surround with          |
+  |                             |                             |
+  |                             |                             |
+  |                             |                             |
+  |                             |                             |
+  |                             |                             |
 
 ### Maven配置（参见 javaEE/Maven.md）
 
