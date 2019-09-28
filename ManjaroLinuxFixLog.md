@@ -1,5 +1,4 @@
 <h2>使用linux系统遇到的问题</h2>
-
 ---
 
 <center>Contents</center>
@@ -47,4 +46,14 @@
   echo $SHELL
   ```
 
+  ### idea不能输入中文
   
+  * 在idea安装目录的```bin/idea.sh头部加上```
+  
+    ```shell
+    export XMODIFIERS="@im=fcitx"
+    export GTK_IM_MODULE="fcitx"
+    export QT_IM_MODULE="fcitx"
+    ```
+  
+    
