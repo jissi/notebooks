@@ -192,6 +192,16 @@
   | ctrl + alt + v              | 补全返回值                  |
   | ctrl + alt + t              | 添加 surround with          |
   |                             |                             |
+  | ctrl + i                    | 实现接口方法                |
+  |                             |                             |
+  | ctrl + q                    | 查看返回类型                |
+  |                             |                             |
+  | ctrl + alt + v              | 生成返回类型                |
+  |                             |                             |
+  | psvm                        | 创建main方法                |
+  |                             |                             |
+  |                             |                             |
+  |                             |                             |
   |                             |                             |
   |                             |                             |
   |                             |                             |

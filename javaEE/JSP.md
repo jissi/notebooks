@@ -501,6 +501,18 @@ ${fn:toLowerCase(str)} //改为小写  toUpperCase(str)
   
     
   
-    
+    * jsp跳转样式丢失
   
+      ```jsp
+      		<%
+      			String path = request.getContextPath();
+      			String basePath = request.getScheme()+"://"
+      					+request.getServerName()+":"
+      					+request.getServerPort()+path+"/";
+      		%>
+      		<base href="<%=basePath%>">
+      ```
+    
+      
+    
     

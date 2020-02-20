@@ -427,7 +427,7 @@
                <interceptor-ref name="定义的名字">引入自定义拦截器
           <!--拦截器继承自MethodFilterInterceptor，配置放行的cation-->
                    <param name="excludeMethods">
-                       要放行的action方法:login
+                       要放行的action方法:login,action2,action3,..
                    <param>
                </interceptor-ref>
                        

@@ -19,7 +19,7 @@ pacman -S deepin deepin-extra
 修改/etc/lightdm/lightdm.conf
 
     修改选项为greeter-session=lightdm-deepin-greeter
-禁用sddm（我这里初始安装的是kde版本的）
+禁用sddm（初始安装的是kde版本的）
 
     systemctl disable sddm
 
@@ -29,8 +29,6 @@ reboot
 卸载kde
  pacman -Rsc plasma
     pacman -Rsc kde-applications
-
-
 ```
 
 3. 系统Path添加
@@ -204,5 +202,19 @@ sudo cp /usr/lib/x86_64-linux-gnu/qt5/plugins/platforminputcontexts/libfcitxplat
      ```
   
   
+  
+  ##### 设置系统启动级别
+  
+  ```shell
+  $ sudo systemctl get-default
+  graphical.target
+  
+  sudo systemctl set-default multi-user.target
+  Removed symlink /etc/systemd/system/default.target.
+  Created symlink from /etc/systemd/system/default.target to /usr/lib/systemd/system/multi-user.target.
+  
+  $ sudo systemctl get-default
+  multi-user.target
+  ```
   
   

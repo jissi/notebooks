@@ -70,7 +70,7 @@
 
 * ## 数据库操作
 
-  1. 创建数据库：```create database <name>  [default character charset utf-8 collate utf8_general_ci]```
+  1. 创建数据库：```create database <name>  [default character set utf-8 collate utf8_general_ci]```
   2. 选择数据库 ：```use <name>;```
   3. 删除数据库：```drop database <name>;```
   4. 

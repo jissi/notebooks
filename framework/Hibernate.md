@@ -196,7 +196,7 @@
 
 3. Session接口（一级缓存）
 
-   负责执行被持久化的CRUD(增删改查)操作
+   负责执行被持久化的CRUD(增查改删)操作
 
    由SessionFactory产生，非线程安全
 
@@ -254,7 +254,7 @@
 >
 > ​					JavaBean + xxx.hbm.xml
 
-<font color="pink">持久化对象具有自动更新数据库的能力，可以不再写session.uodate(obj)</font>	[why?](#why)
+<font color="pink">持久化对象具有自动更新数据库的能力，可以不再写session.update(obj)</font>	[why?](#why)
 
 1. 持久化类的编写规则
    * public 无参数构造方法
@@ -346,7 +346,7 @@ SessionFactory作为二级缓存，增强一级缓存Session；默认关闭（�
 * <font color="red">事务的特性</font>
   1. 原子性：最小组成单位，不可分割
   2. 一致性：执行前后数据一致
-  3. 隔离性：并发访问时，多个事务互不干扰
+  3. 隔离性：并发访问时，多个事务互不干扰dd
   4. 持久性：一旦提交，永久保存
 
 * <font color="red">不考虑隔离性 带来的后果</font>
@@ -412,7 +412,7 @@ SessionFactory作为二级缓存，增强一级缓存Session；默认关闭（�
 3. 数据层获取当前线程中的session对象
 
    ```java
-   Session session = 工具类总获取session的方法; //与
+   Session session = 工具类中获取session的方法; //与
    ```
 
 4. session会随线程一起关闭，不需要再写session.close();
@@ -771,7 +771,7 @@ SessionFactory作为二级缓存，增强一级缓存Session；默认关闭（�
      criteria.setMaxResults(3);
      ```
 
-  5. 聚合函数
+     1. 聚合函数
 
      ```java
      criteria.setPojection(Projections.count("属性"));
@@ -829,6 +829,7 @@ SessionFactory作为二级缓存，增强一级缓存Session；默认关闭（�
 
   ```java
   Users user = session.get(Users.class,1L);//不延迟，直接发送一条sql
+  
   Users user = session.load(Users.class,1L);//不发送sql
   System.out.print(user.getLinkman().size());//发送sql
   ```
