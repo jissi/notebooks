@@ -1,4 +1,6 @@
 <h1>Spring</h1>
+Spring核心：IOC/DI  、AOP、声明式事务
+
 Inverse of Control：控制反转
 
 Dependency Inject：依赖注入
@@ -42,7 +44,7 @@ xml --> 工厂
 
 > spring:
 >
-> ​	core、expression、bean、context
+> ​	core（核心类包）、expression（SPEL表达式）、beans（Bean）、context（上下文）
 >
 > org.apache:
 >

@@ -531,6 +531,8 @@
       <bean class="...MapperScannerConfigurer">
       	<property name="basePackage"
                     value="包路径，包路径,.."/>
+          <property name="sqlSessionFactory"
+                    ref=""/>
       </bean>
   ```
 

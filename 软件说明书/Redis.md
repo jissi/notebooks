@@ -170,30 +170,92 @@ redis-sentinel
 >
 > 有序集合：zset
 
+<font color=red>redis所有操作都是原子性的，采用单线程处理所有业务，，命令一个一个排队执行，无须考虑并发操作带来的数据影响</font>
 
+<font color="red">KEY的命名规范：```表名：主键名：主键值：字段名```</font>
 
 #### 1. String类型
 
 ##### 取值、赋值、删除
 
-* set key value
-* get key  空值为 nil
-* del key 返回删除的value
+```properties
+#设置一个键值对
+set key value
+#获取一个值
+get key
+#删除一个键值对
+del key
+#获取值的长度
+strlen key
+#给key追加值
+append key value
+#一次存多个键值对
+mset k1 v1 k2 v2 k3 v3
+#一次取多个值
+mget k1 k2 k3
 
-##### 数值增减
+
+# 数据未获取到 返回 nil 等同于 null
+# 最大存储容量 512M
+```
+
+数据量过大大时考虑切分后mset
+
+##### 数值增减（解决mysql分表时ID重复的问题）
+
+如果原始String不能转成数值或者超过数值（Long.MAX_VALUE）上限将报错
 
 ```shell
-incr key1 : key1的值自增
-edcr key1 : key1的值自减
+incr key1 : key1的值自增，可以为负值
+decr key1 : key1的值自减
 incrby key1 10 : 将key1的值+10
+incrbyfloat key1 1.5:增加小数
 decrby key1 10 : 将key1的值-10
 ```
 
+#### 设置数据的生命周期
 
+```properties
+#存活10s
+setx key1 10 value
+#存活10ms
+psetx key1 10 value
+#设置后再操作该key则时长失效
+```
 
-#### 2. hash类型(存储数据库中的数据对象)
+String应用场景
+
+微博粉丝数
+
+```shell
+#方法一：以用户主键和属性作为key
+# 表名:主键名:主键值:字段名
+set user:id:10001:fans 5000 #粉丝 5000
+set user:id:10001:blogs 200 #博客 200
+
+#方法二：使用json格式
+set user:id:10001 {id:10001,name:test,fans:5000,blogs:200}
+```
+
+各种结构型和非结构型数据
+
+#### 2. hash类型(存储数据库中的数据对象（redis里的redis）)
+
+使用String存储JSON只方便取值不方便修改
 
 用来存储对象
+
+> key
+>
+> > field1    value
+> >
+> > field2   value
+
+hash存储上线 2的32次方-1；
+
+hash类型十分贴近对象的数据存储格式，但是hash设计初衷不是为存储大量对象而设计的，不要滥用，更不可以将hash作为对象列表使用；
+
+hgetall再field很多时效率会非常低；
 
 ##### 命令:
 
@@ -204,66 +266,96 @@ hset user1 age 20
 hset user1 sex male
 # 一次存储多个属性
 hmset user1 name jissi age 20 sex male
-
 # 获取一个属性
 hget user1 name
 # 获取所有属性
 hgetall user1
 # 一次获取多个属性
 hmget user1 name age sex
-
-
 # 删除多个属性
 hdel user1 name sex
-
 # 增减
-hincrby user1 age 1 : user1的age+1
+hincrby user1 age 1 # user1的age+1
+hlen user #获取key中的field数量
+hexists user age#是否存在某个field
+hkeys user #获取所有field
+hvals user #获取所有value
+hsetnx key field value #如果field没值则设置value
 ```
 
+#### 购物车
 
+一个用户一个购物车、一个购物车可以有多个商品、商品购买数量
 
-#### 3. list类型（先进后出，适用与评论列表）
+```shell
+field1 保存 商品id:nums 200
+专门保存商品的hash
+```
+
+抢购
+
+```shell
+商家id做key，
+价格做field,
+数量做value
+```
+
+#### 3. list类型（先进后出，适用与评论列表，多数据、有顺序）
 
 使用LinkedList实现（底层双向循环链表）
 
 更确切的描述是栈（先进后出）
 
+list的数据都是String类型，容量2的32次方-1
+
+具有索引的概念，但是操作数据时通常以队列的形式出入对
+
 ##### 命令
 
 ```shell
-# 从左边存入一列
-lpush key1 1 2 3
+lpush key1 1 2 3 # 从左边存入一列
 # 从右边存入一列
-rpush key1 4 5 6
+rpush key1 4 5 6 
 # 从左边取出列
 lrange key1 0 2 :取出0～2索引的值 先进后出！！！
 lrange key1 0 -1 :取出所有
-
-# 弹出左边列最上面的元素
-lpop key1
-# 弹出右边列最上面的元素
-rpop key1
-
-# 获取元素个数
-llen key1
+lpop key1 # 弹出左边列最上面的元素
+rpop key1 # 弹出右边列最上面的元素
+lrem key1 数量 value #移除指定数量的value
+llen key1 # 获取元素个数
+lindex key1 0 #指定查索引的值
+blpop key1 [key2] 30 #30秒内lpop,如果30秒内都没有数据，没有数据就不等了
+brpop key1 [key2] 30
 ```
 
+微信点赞显示顺序
 
+```java
+动态id做key
+点赞：rpush
+取消点赞：lrem
+```
 
-#### 4. set类型（无序，不重复）
+关注列表和粉丝列表
+
+多服务器日志列表，redis实现消息汇集
+
+#### 4. set类型（无序，不重复，基于Hash结构）
+
+List的链表结构存储效率低
+
+Set 大量存储，便于查询
 
 ##### 命令
 
 ```shell
-# 向集合添加元素
-sadd skey1 1 2 3
-# 查看集合中所有元素
-smembers skey1
-# 从集合异常元素
-srem skey1 1
-# 查询集合中是否存在元素
-sismember skey1 1 : 0表示不存在
-
+sadd skey1 1 2 3 # 向集合添加元素
+smembers skey1 # 查看集合中所有元素
+srem skey1 1 # 从集合移除元素
+scard key1 #获取数据总量
+sismember skey1 value # 查询集合中是否存在元素
+srandmember key1 数量 #随机取出指定个数量的数据
+spop key1 数量 #随机pop指定个数据
 #集合运算
 # 差集 A - B (A中存在，B中不存在)
 sdiff skey1 skey2
@@ -273,7 +365,7 @@ sinter skey1 skey2
 sunion skey1 skey2
 ```
 
-
+随机推荐
 
 #### 5. zset类型（有序集合，榜单）
 

@@ -89,7 +89,7 @@ POM：项目对象模型；依赖管理模型
 
 ### 5. Maven项目结构
 
-![](/run/media/jissi/other/data/notebooks/resources/MavenStructure.png)
+![](../resources/MavenStructure.png)
 
 ---
 
