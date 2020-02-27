@@ -396,12 +396,12 @@ OOP：面向对象编程，AOP是OOP的延续而不是替代
      <!--约束 spring配置约束的 aop部分-->
      
      <!--将实现类和切面类交给IOC容器-->
-     <beans id="目标对象id" class="目标对象path"></beans>
-     <beans id="切面类id" class="切面类path"></beans>
+     <beans id="被增强类id" class="被增强类path"></beans>
+     <beans id="带有通知的类id" class="带有通知类path"></beans>
      
      <aop:config><!--aop配置-->
-         <aop:aspect ref="切面类id"><!--切面配置-->
-             <aop:before method="切面类中的增强方法"
+         <aop:aspect ref="通知类id"><!--切面配置-->
+             <aop:before method="通知类中的增强方法"
                          pointcut="切入点表达式"/><!--定义通知-->
          </aop:aspect>
      </aop:config>
@@ -455,12 +455,13 @@ OOP：面向对象编程，AOP是OOP的延续而不是替代
 3. 切面类
 
    ```java
+   @Componnet
    @Aspect
    public class 切面类{
        @Before(value="切入点表达式")//其他通知类型同理
        public void 增强(){....}
        
-       //自定义切入点，有了该方法，可以使用 类.pointcur() 取代 切入点表达式
+       //自定义切入点，有了该方法，可以使用 类.pointcut() 取代 切入点表达式
        @Pointcut(value="切入点表达式")
        public void pointcut(){}
    }
