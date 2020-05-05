@@ -77,9 +77,11 @@ javascript框架，是对js的一种封装
   选择器后的空格表示下一级元素
 
   ```JavaScript
+  -----selector-----
   $("元素名");//选择所有该标签的元素
   $("#id");//根据id选择元素，重复id则只选第一个
   $(".类名");//选择类
+  -----------------
   $("div#d1 span");//选中id为1的div内的span，层级选择
   	//注意空格，表示下一级
   $("selector:first|last");//满足selector的第一个|最后一个元素
@@ -97,6 +99,7 @@ javascript框架，是对js的一种封装
   
   表单对象选择器，选中form下会出现的输入元素
   $("selector:input");//所有输入元素：input,textarea,select,button等
+  $(".form:input");//selector 为 .form ,选中form下的所有input
   :button		//选择type=button的Input和button元素
   :radio		//单选框
   :checkbox	//复选框
@@ -126,7 +129,7 @@ javascript框架，是对js的一种封装
   .parents();//所有祖先元素
   .children();//紧接着的子元素
   .find(selector);//筛选出后代元素
-  .sibling();//同级元素
+  .siblings();//同级元素
   ```
 
 
@@ -206,6 +209,11 @@ javascript框架，是对js的一种封装
   
   on("click",function(){});//绑定(点击)事件
   trigger("dbclick");//触发事件
+  
+  
+  select操作
+  $("option").attr("selected",false);
+  $("select").find("option[value='"+type+"']").attr("selected",true);
   ```
 
 
@@ -216,9 +224,12 @@ javascript框架，是对js的一种封装
 
   ```javascript
   $.ajax({
+      type:'post',//get,put,delete
       url:page,//要访问的页面
       data:{"name":value},//参数
+      dataType: "json",//服务器返回的数据类型
       success:function(result){}.//响应函数,result为服务器响应内容
+      error:function(){}//请求失败回调函数
   });//提交ajax请求，使用参数集:$.ajax({...,...})
   
   $.get(
@@ -278,6 +289,24 @@ javascript框架，是对js的一种封装
   ```JavaScript
   get(0);或 [0]//JQuery转DOM
   $();//DOM转JQuery
+  ```
+
+  
+
+
+
+
+
+-----
+
+##### 使用笔记
+
+* 设置全选与反选
+
+  ```js
+  $("#selectAll").is(":checked") ;//是否被勾选
+  $(":checkbox").prop("checked",true);//设置全选
+  $(":checkbox").prop("checked",false);//设置全部取消
   ```
 
   

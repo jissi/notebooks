@@ -14,8 +14,10 @@
 
 * 三大组件：HandlerMaping、HandlerAdapter、ViewResolver
 
-  如果在springMvc.xml没有显示指定处理器映射器和处理器，SpringMVC就会逐个匹配，效率低；
+  Handler 对应了Controller中的方法
 
+  如果在springMvc.xml没有显示指定处理器映射器和处理器，SpringMVC就会逐个匹配，效率低；
+  
   视图解析中指定前后缀后，modelAndView对象在设置返回数据的页面时就不需要在指定路径，直接写页面名就可以
 
 ---
@@ -33,7 +35,7 @@
        <servlet>
            <servlet-name>dispatcher</servlet-name>
            <servlet-class>
-               ...AdapterServelt</servlet-class>
+               ...DispatcherServlet</servlet-class>
            <!--指定配置文件位置-->
            <init-param>
                <param-name>
@@ -88,7 +90,7 @@
 
    ---
 
-### 三、☆SpringMVC参数绑定（从页面接收参数） 
+### 三、☆SpringMVC参数绑定（从页面接收参数）
 
 ​				<font size=4>Controller中方法的参数</font>
 

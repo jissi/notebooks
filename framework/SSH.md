@@ -222,18 +222,9 @@ hibernateTemplate封装了session
   1. 根据主键查询一个记录
   User user = (User)template.get(User.class,1L);
   2. 查询多条记录
-List<User> list = (List<User>) template.find("HQL"[,？代表的参数]);
+  List<User> list = (List<User>) template.find("HQL"[,？代表的参数]);
   3. QBC查询：传入离线查询对象
   List<User> list = (List<User>) template.findByCriteria(detachedCriteria);
   ```
-  
-* 
 
-### 第一次整合SSH框架出现的问题
-
-1. <font color="red" size=5> 忘记提供setter和getter方法，报错3次！！！</font>
-   * service，dao层缺少setter和getter，加载配置文件报错2次
-   * action 缺少setter，没能成功封装数据
-2. <font color="red">idea web部署不会，导致多次404，还不知道为什么</font>
-3. 根据主键查询用户时弄混了HQL
 

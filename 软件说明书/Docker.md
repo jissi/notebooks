@@ -42,6 +42,7 @@
   镜像站：https://hub.docker.com/
 
   ```shell
+  使用docker镜像加速：www.docker-cn.com
   docker search mysql #搜索镜像
   docker pull mysql [:5.5] #拉去镜像[:标签|默认latest]
   docker images #查看镜像
@@ -53,7 +54,7 @@
   一个镜像可以启动多个容器
 
   ```shell
-  docker run --name 容器取名 -d mysqld:5.5 #启动镜像，生成容器
+  docker run --name 容器取名 -d mysqld:5.5 #启动镜像，生成容器，-d 后台运行
   docker [--name xxxx] -d -p 8888:8080 tomcat #-p 端口映射 主机端口8888映射到容器端口
   docker ps #查看启动的容器
   docker ps -a #查看所有容器

@@ -328,31 +328,60 @@ core container：core、beans、expression、context
 
 * @Component 用在类上，标记该类为IOC组件
 
-* AOP注解：一次只能指定一个切点
+  > -------------------------
+  >
+  > IOC 标识该类交给Spring管理
+  >
+  > @Controller
+  >
+  > @Service
+  >
+  > @Repository
+  >
+  > --------------------------
+  >
+  > 将该属性注入值
+  >
+  > @Resource(name="") ：java中的注解(无需getter/setter) 先byName再byType
+  >
+  > @AutoWired ：Spring注解byType（无需getter/setter）
+  >
+  > @Value(value="${}") ：为属性注入properties中的值
+  >
+  > ------------------
+  >
+  > AOP相关
+  >
+  > @Aspect 定义切面类
+  >
+  > @Pointcut(value="execution( )") 定义切点
+  >
+  > @Before("切点名") 定义通知 、@AfterReturning、@After、@AfterThrowing、@Around
+  >
+  > 
+  >
+  > -----------------------------------------
+
+* AOP注解：将某个方法指定为切点代表
 
   ```java
-  //需要增强的类
-  @Component
-  public class AnnoDemo {
-      //指定切点名
-      @Pointcut("execution(* com.aop.annotaionAOP.AnnoDemo.methodOne())")
-      public void methodOne() throws Exception{
-          int s = 5/0;
-          System.out.println("MethodOne");
-      }
-  }
   //切面类
   @Component
   @Aspect
   public class Advices {
-      //指定切点
-      @Before("com.aop.annotaionAOP.AnnoDemo.methodOne()")
+      //定义所有切点
+      @Pointcut("execution(* com.aop.annotaionAOP.*.*(..))")
+      public void point(){}
+      
+      // 在所有切点上执行前置通知
+      @Before("point()")
       public void before(){
           System.out.println("前置通知");
       }
+      // 通知执行顺序 before -> after -> afterReturning
   }
   ```
-
+  
   
 
 #### 5.代理设计模式 静态代理&动态代理
@@ -459,3 +488,167 @@ public class CglibTest {
 }
 ```
 
+
+
+#### 6. 加载外部配置&单例设计模式
+
+##### 引入其他spring配置文件
+
+```xml
+<import resource=""/>
+```
+
+##### 引入属性配置文件
+
+```xml
+<context:property-placeholder location="classpath:test.properties,classpath:xxx"/>
+在spring配置文件中使用
+<bean id="xxx" class="">
+    <property name="xx" value="${jdbc.name}"/>
+</bean>
+```
+
+```java
+//在代码中为属性注入配置文件值
+@Value("${jdbc.name}")
+private String name;
+```
+
+
+
+##### @Scope(value="singleton") ：对象作用范围（单例/多例）
+
+* singleton：默认单例
+* prototype：多例
+* request：一次请求内都是单例
+* session：会话内单例
+* application：整个引用中单例
+
+
+
+##### 单例设计模式：保证程序中只有只有一个实例
+
+* 提升运行效率；实现数据共享(例如 application对象在tomcat启动时就存在)
+
+  ```java
+  构造方法私有：其他类不能实例化该对象
+  私有静态 类变量：用于保存实例，初始值=null为懒汉式，初始值=实例为饿汉式
+  对外提供公共静态的访问方法返回当前类的实例：（懒汉式注意线程同步）
+  ```
+
+  
+
+* 懒汉式-单例设计模式：只有调用时才创建实例：由于添加了锁，导致效率低
+
+  ```java
+  public class Hangry {
+      //私有静态类变量
+      private static Hangry hangry;
+      //构造方法私有化
+      private Hangry(){}
+      //公共静态方法
+      public static Hangry getInstance(){
+          //如果已经有实例就不要排队了
+          if (null != hangry) return hangry;
+          //如果没有实例，排队
+          synchronized (Hangry.class){
+              if (null == hangry){
+                  hangry = new Hangry();
+              }
+              return hangry;
+          }
+      }
+  }
+  ```
+
+  
+
+* 饿汉式-单例设计模式：给定初始值，类加载时就实例化：解决懒汉式效率低的问题
+
+  ```java
+  public class Lazy {
+      //私有静态类变量
+      private static Lazy lazy = new Lazy();
+      //构造方法私有化
+      private Lazy(){}
+      //公共静态方法
+      public static Lazy getInstance(){return lazy;}
+  }
+  ```
+
+  
+
+#### 7. 声明式事务
+
+编程式事务：由程序员编写事务控制代码
+
+声明式事务：事务控制代码已经被写好，只需要声明哪些方法需要事务控制以及如何控制
+
+声明式事务一般针对于serviceImpl类下的方法
+
+事务管理器基于通知（advice）
+
+
+
+* 注解方式配置文件
+
+  ```xml
+  在ServiemImp上加上@Transactional注解
+  <tx:annotaion-drien transaction-manager="平台事务实现类"/>
+  ```
+
+  
+
+* 事务属性
+
+  ##### readonly="false" 
+
+  > true：只读，查询方法推荐 使用，数据库优化，对性能有一定提升
+  >
+  > false：默认，需要提交事务， 增删改使用
+
+  ##### propagation="REQURED"：事务传播行为
+
+  
+
+  > REQUERED 默认，保证A和B在同一事务中，必须在事务中执行
+  >
+  > SUPPORTS：自己不开事务，当前有事务就在事务执行，没有事务就在非事务执行
+  >
+  > MANDATORY：一定要在事务执行，没有事务就报错
+  >
+  > REQUERED_NEW：保证A和B不在同一事务中
+  >
+  > NOT_SUPPORTED：必须在非事务中执行，当前有事务就将其挂起
+  >
+  > NEVER：必须非事务执行，如果当前有事务就报错
+  >
+  > NESTED	A执行后设置保存点，如果B异常，回滚到保存点或最初
+  
+  ##### isolation = "DEFAULT"：事务隔离级别，多线程/并发访问下保证访问到的数据是完整的
+  
+  * 脏读：
+  
+    事务A读到事务B中还未提交的数据，此时事务A读到的数据可能与数据库不一致，此数据为脏数据
+  
+  * 不可重复读：需要锁定一行数据
+  
+    某行数据的修改操作，事务A第一次读取数据后，事务B对A读取过的数据进行修改，导致A再次读取此数据时与第一次不一样
+  
+  * 幻度：需要事务排队
+  
+    增删操作，事务A条件查询出结果，事务B增删了符合A查询条件的数据，导致事务A查询结果与数据库不一致。
+  
+  > DEFAULT：默认，由数据库自行判断使用哪种隔离级别
+  >
+  > READ_UNCOMMITED：可以读取为提交数据，可能出现 脏读、不可重复度、幻读，效率最高
+  >
+  > READ_COMMITD：指定读取已经提交的数据，只能避免脏读
+  >
+  > REPEATABLE_READ：读取的数据上锁，可以避免脏读和不可重复读
+  >
+  > SERIALIZABLE：事务排队，多定表，当前事务操作完成后，下一个才能操作，最安全，效率最低
+  
+  ##### rollback-for="java.lang.Exception"：手动抛异常时 throws Exception 加上此参数
+  
+  ##### no-rollback-for=""：指定哪种异常不回滚

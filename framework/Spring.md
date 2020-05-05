@@ -419,7 +419,9 @@ OOP：面向对象编程，AOP是OOP的延续而不是替代
   6. 方法 ```save*()```表示以save开头的方法
   7. 方法参数 ```save(*)```表示一个参数，```save(..)```表示任意参数
 
-* 通知类型
+* 通知类型：
+
+  执行顺序：before -> after -> afterReturning
 
   1. ```<aop:before>```前置通知，切入点执行前通知/增强
 
@@ -430,7 +432,7 @@ OOP：面向对象编程，AOP是OOP的延续而不是替代
   4. ```<aop:throwing```异常抛出通知，切入点异常后通知
 
   5. ```<aop:around>```环绕通知，切入点执行前后都通知，异常不通知，而且需要在通知中手动执行切入点：
-
+  
      ```java
      切面类中方法：
      public void around(ProceedingJoinPoint jionPoint){

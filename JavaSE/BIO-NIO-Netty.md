@@ -1,0 +1,211 @@
+# BIO，NIO，AIO，Netty
+
+[TOC]
+
+### Socket概念
+
+socket无关语言，是网络编程的标准；
+
+两个网络程序通过一个双向通信连接实现数据交换，连接的一端称为socket；建立网络通信连接至少需要一个端口号；
+
+socket的本质是编程接口对TPC/IP的封装
+
+* socket连接步骤
+  1. 服务端监听
+
+  2. 客户端发起请求
+
+  3. 连接确认（tcp/ip三次握手）
+
+     ```java
+     client -> 根据ip+port 向server发送数据包，试探server
+     server -> 向client 发送 ask+数据包，表示server已经准备好
+     client -> 向server fas ask+数据包，表示client已经准备好，连接完成
+     ```
+
+  4. 数据交互
+
+  5. 断开连接（tcp/ip四次挥手）
+
+     ```java
+     client -> 请求关闭
+     server -> 可以关闭
+     server -> server端已经关闭
+     client -> client端已经关闭（server是否收到不可知）
+     ```
+
+     
+
+#### Java Socket
+
+```java
+ServerSocket  服务端监听socket，监听到客户端socket后创建socket与客户端socket连接
+Socket
+```
+
+
+
+### 同步和异步
+
+都是相对与内核（OS）的交互而言
+
+同步：用户进程、线程触发IO操作并   等待或轮询    地去查看IO操作是否就绪
+
+异步：用户进程、线程触发IO操作，然后去做自己的事情，IO操作完成时会受到通知，（需要OS支持异步操作）
+
+```java
+同步：自己去银行取钱
+异步：委托别人去取钱，然后交给我
+```
+
+
+
+### 阻塞和非阻塞
+
+与同步、异步没有直接关系，ajax是非同步的，阻塞的（异步阻塞）
+
+指的是用户进程、线程在访问数据时，针对IO操作的状态采取不同的方式（即读、写方法的实现方式）
+
+阻塞：一直等待到IO操作完成
+
+非阻塞：IO操作会立即返回一个状态值；（当前不能读写会被告知，能读写了会受到通知）
+
+```java
+阻塞：ATM排队取钱
+非阻塞：取号，然后做自己的事情，可以不断查看是否排到自己了，被叫到后去取钱
+```
+
+异步是OS支持的一种操作，阻塞是一种方法的实现逻辑
+
+### BIO Blocking IO 同步阻塞 jdk1.4之前
+
+```java
+服务端监监听请求，
+客户端1发来请求，服务端创建socket并开启线程，
+客户端2发来请求，服务端创建socket并开启线程...
+```
+
+服务端实现逻辑为一个连接一个线程，如果某个连接至是连接而不做任何操作，将造成不必要的线程开销
+
+可以使用线程池来改善：
+
+```java
+将serverSocket创建的socket交给实现Runnable接口的类，在run方法中执行操作
+将Runnable接口实现类的实例交给线程池执行
+```
+
+
+
+适用于连接数目小且固定的架构，对服务器资源要求高，并发局限于应用中
+
+
+
+### NIO 同步非阻塞IO jdk1.4
+
+基于事件驱动思想，结束BIO的大并发问题；
+
+NIO基于Reactor，当socket有流可读写时操作系统会通知相关程序处理（将流读入缓冲区或写入操作系统）；
+
+一个线程可以轮询处理多个客户端，无效连接不会有线程处理
+
+NIO在创建连接后，不需要对应一个线程，而是将连接注册到多路复用器（selector）上，多路复用器轮询时发现连接上有请求才会开启线程来处理；
+
+处理请求的线程可能要等待其他资源（jdbc连接等），导致该线程阻塞，并发量大时还是会出现BIO一样的问题；
+
+NIO中一个请求对应一个通道
+
+适用于连接多且连接短的轻量级架构，并发局限于应用中
+
+
+
+通道Channel：双向运输数据，只负责运输
+
+缓存Buffer：存储数据 ByteBuffer、Short、Char、Int、Long、Float、Double，没有布尔型
+
+选择器Selector：
+
+##### Buffer
+
+关键属性：
+
+> capacity：最多容量值
+>
+> limit：可操作数据的大小，写模式下与capacity相同，读模式下是第一个不可读的索引
+>
+> position：正在处理的字节位置，写模式下是下次写入字节的索引，读模式下是正在读取的索引
+
+
+
+![](G:\data\notebooks\resources\img\nio-buffer.png)
+
+
+
+> 常用方法：
+>
+> buffer.put();//向缓冲区存入数据
+>
+> buffer.flip();//重置position和limit，limit = position；position=0（切换到读模式）
+>
+> buffer.get();//从缓存区读取数据，无参时获取当前position处的数据
+>
+> buffer.clear();//清空缓存  limit=capacity; position=0
+>
+> buffer.remaining();// limit - position 剩余容量
+
+* Buffer操作
+
+  ```java
+  ByteBuffer buffer = ByteBuffer.allocate(1024);//创建容量为1024的字节buffer
+  byte[] data = {1,2,3};
+  buffer.put(data);
+  buffer.flip();//切换到读模式
+  byte[] info = new byte[buffer.limit()];
+  buffer.get(info);//将数据读取到info
+  ```
+
+* 使用逻辑
+
+  读取socket数据
+
+  ```java
+  buffer.clear();
+  socketChannel.read(buffer);//将channl中数据读入buffer
+  buffer.flip();
+  buffer.get();
+  buffer.clear();
+  ```
+
+  写回socket数据
+
+  ```java
+  buffer.clear();
+  buffer.put();
+  buffer.flip();
+  socketChannel.wirte(buffer);//将buffer数据读入channel
+  buffer.clear();
+  ```
+
+   
+
+### AIO Asynchronous IO 异步非阻塞 JDK1.7
+
+与NIO不同，进行IO操作时，直接调用read，write；
+
+读操作：有流可读时，OS将流传入缓冲区，并通知程序；
+
+写操作：OS将流写入完毕后通知程序
+
+read、write都是异步的，JDK1.7中被称作NIO.2;
+
+主要在java.nio.channels包下增加了四个通道
+
+```java
+AsynchronousSocketChannel;
+AsynchronousServerSocketChannel;
+AsynchronousFileChannel;
+AsynchronousDatagramChannel;
+```
+
+服务器一个有效请求对应一个线程，客户端IO请求先有OS完成然后再通知服务器启动线程进行处理;
+
+适用于连接数目多，连接时间长的架构

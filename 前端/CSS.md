@@ -102,6 +102,8 @@ p{
       	  pre-wrap:显示所有空格，超出父容器长度自动换行
       	  nowrap:不换行直到使用<br/>
       	*/
+      word-wrap: normal;
+      		/*break-word 超出换行
   }
   </style>
   ```
@@ -193,7 +195,6 @@ p{
   display:none;隐藏该元素，让出所占空间
   visibility:hidden;隐藏元素，该元素所在位置变为空白
   ```
-
 
 ----
 

@@ -567,3 +567,33 @@ c.andSexEqualTo("x");//添加条件
 selectByExample(example);//返回List集合
 ```
 
+
+
+### 十一、Mybatis使用中遇到的问题
+
+* PageHelper不支持关联查询分页
+
+  解决方案：
+
+  ```shell
+  在reualtMap的 Collection中手动指定嵌套查询
+  <resultMap id="userAndRole" type="com.jissi.basic.repository.entity.User">
+          <id property="uid" column="uid"></id>
+          <result property="username" column="username"></result>
+          <result property="nickname" column="nickname"></result>
+          <result property="avatar" column="avatar"></result>
+          
+          <collection property="roles" ofType="com.jissi.basic.repository.entity.Role"
+                      select="subQueryRole" column="{urUid = uid}"> 
+                      <!--指定嵌套查询，并向查询传惨urUuid,其值为主查询的值-->
+              <id property="id" column="id"></id>
+              <result property="roleName" column="role_ame"></result>
+          </collection>
+  </resultMap>
+  
+  主查询只负责查询User信息，从查询负责根据uid查询Role信息
+  Mapper接口只需指定主查询
+  ```
+
+  
+

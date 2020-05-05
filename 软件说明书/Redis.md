@@ -7,6 +7,10 @@
 
 对持久化支持不够好，一般不作为主数据库存储，一般配合关系型数据库使用
 
+传统关系型数据库：ACID：原子性，一致性，隔离性，持久性
+
+NOSQL特性：CAP：强一致性，可用性，分区容错性
+
 [TOC]
 
 ### 一、redis简介
@@ -119,45 +123,6 @@ redis-sentinel
 
 
 
-#### 2. 整合Spring
-
-* 配置文件
-
-  ```xml
-      <beans>
-          <!--连接池配置-->
-          <bean id="jedisPoolConfig" class="redis.clients.jedis.JedisPoolConfig">
-              <!--一些参数-->
-          </bean>
-          <!--创建连接池-->
-          <bean id="jedisPool" class="redis.clients.jedis.JedisPool" destroy-method="clone">
-              <constructor-arg name="poolConfig" ref="jedisPoolConfig"/>
-              <constructor-arg name="host" value="192.168.1.106"/>
-              <constructor-arg name="port" value="6379"/>
-          </bean>
-      </beans>
-  ```
-
-* 获取连接池
-
-  ```java
-      private ApplicationContext applicationContext;
-      @Before
-      public void beforeTest(){
-          applicationContext = new ClassPathXmlApplicationContext("classpath:applicationContext.xml");
-      }
-      
-      @Test
-      public void test(){
-          JedisPool jedisPool = (JedisPool) applicationContext.getBean("jedisPool");
-          Jedis resource = jedisPool.getResource();
-          System.out.println(resource.get("key2"));
-          // spring回负责关闭
-      }
-  ```
-
-
-
 ### 四、Redis数据类型 5种
 
 > 字符串：String
@@ -193,7 +158,6 @@ append key value
 mset k1 v1 k2 v2 k3 v3
 #一次取多个值
 mget k1 k2 k3
-
 
 # 数据未获取到 返回 nil 等同于 null
 # 最大存储容量 512M
@@ -255,7 +219,7 @@ hash存储上线 2的32次方-1；
 
 hash类型十分贴近对象的数据存储格式，但是hash设计初衷不是为存储大量对象而设计的，不要滥用，更不可以将hash作为对象列表使用；
 
-hgetall再field很多时效率会非常低；
+hgetall在field很多时效率会非常低；
 
 ##### 命令:
 
@@ -324,6 +288,7 @@ rpop key1 # 弹出右边列最上面的元素
 lrem key1 数量 value #移除指定数量的value
 llen key1 # 获取元素个数
 lindex key1 0 #指定查索引的值
+lset key index value #修改指定索引的值
 blpop key1 [key2] 30 #30秒内lpop,如果30秒内都没有数据，没有数据就不等了
 brpop key1 [key2] 30
 ```
@@ -389,9 +354,31 @@ zrem zkey1 jissi
 ### 五、通用命令
 
 * keys * : 查看所有key   keys *1 所有以1结尾的key
+
 * ping ：服务器是否在线 返回pong
 
+* 设置key的过期时间：返回1设置成功
 
+  ```shell
+  expire key seconds #设置某个key的过期时间为多少秒
+  pexpire key milliseconds # ..毫秒
+  ------
+  expireat key timestamp # 某个key在时间戳秒后过期
+  pexpireat key millitimestamp #..毫秒
+  ----
+  setex key seconds value # set + expire
+  ----
+  persist key # 取消key过期时间，该key转为永久态 过期时间为 -1
+  ```
+
+* 查看key的过期时间：永久-1，-2表示key不存在
+
+  ```shell
+  ttl key # 查看key的剩余时间秒
+  pttl key # ...毫秒
+  ```
+
+  
 
 ### 六、Redis持久化方案
 

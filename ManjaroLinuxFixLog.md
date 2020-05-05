@@ -47,15 +47,15 @@
   ```
 
   ### idea不能输入中文
-  
+
   * 在idea安装目录的```bin/idea.sh头部加上```
-  
+
     ```shell
     export XMODIFIERS="@im=fcitx"
     export GTK_IM_MODULE="fcitx"
     export QT_IM_MODULE="fcitx"
     ```
-  
+
 * manjaro修改桌面环境
 
   ```

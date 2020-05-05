@@ -1,7 +1,5 @@
 <h1>SpringBootDemo</h1>
-
 <center>contents</center>
-
 [TOC]
 
 ---
@@ -39,10 +37,12 @@ public class HelloApplication {
 
 ```yaml
 @SpringBootApplication 是组合注解包括 :
-	@SpringBootConfiguration -> @Configuration -> @Component
+	@SpringBootConfiguration -> @Configuration -> @Component 
 	@EnableAutoConfigruation 根据项目中的jar包开启自动配置
 	@ComponentScan 没有指定扫描路径，默认扫描所在的同级目录及其子目录
 ```
+
+在springboot项目推荐使用@SpringBootConfiguration替代@Configration
 
 ##### 关闭自动配置
 
@@ -64,5 +64,19 @@ application.setBannerMode(Banner.Mode.OFF);
 application.run();
 ```
 
+
+
+#### 3.全局配置文件：resources/application.properties/application.yml
+
+```yml
+server:
+  port: 8080
+  servlet:
+    context-path: /
+```
+
+
+
+#### 4.@ImportResource({"classpath: some.xml",".."}) 引入xm配置文件
 
 
