@@ -77,29 +77,25 @@ javascript框架，是对js的一种封装
   选择器后的空格表示下一级元素
 
   ```JavaScript
-  -----selector-----
-  $("元素名");//选择所有该标签的元素
+  -----基本查询-----
+  $("标签名");//选择所有该标签的元素
   $("#id");//根据id选择元素，重复id则只选第一个
-  $(".类名");//选择类
-  -----------------
-  $("div#d1 span");//选中id为1的div内的span，层级选择
-  	//注意空格，表示下一级
-  $("selector:first|last");//满足selector的第一个|最后一个元素
-  $("selector:odd|even");//满足selector的奇数|偶数元素，第一个下标为0
-  $("selector:hidden|visible");//满足selector的隐藏|可见的元素
+  $(".类名.类名");//根据class查找
+  $("[name='user']");//根据属性值查找
+  $("[attr!='val']");//name属性不等于
+  $("[name ^='val']");//name属性以val开头
+  $("[name ='val']");//name属性以val结尾
+  $("[name *='val']");//name属性包含val
   
-  属性选择
-  $("selector[属性]");//满足选择器的有某属性的元素
-  $("selector[attr='val']");//。。。属性="val"的元素
-  $("selector[attr!='val']");//。。。属性不等于
-  $("selector[attr^='val']");//。。。属性以val开头
-  $("selector[attr$='val']");//。。。属性以val结尾
-  $("selector*=val");//。。。属性包含val
-  //一般使用[class='.className']
+  $("div,p");//将div和p标签都查出
+  -----------------组合查询
+  $("input[name='username']");//查找 <input name="username"/>
+  -----------------层级查询
+  $("div#d1 span");//选中id为1的div内的span，层级选择 //注意空格，表示下一级
+  $("div > p.color-red");// 子选择器，p必须是div的直系子dom
   
   表单对象选择器，选中form下会出现的输入元素
-  $("selector:input");//所有输入元素：input,textarea,select,button等
-  $(".form:input");//selector 为 .form ,选中form下的所有input
+  $(":input");//input texteara select button
   :button		//选择type=button的Input和button元素
   :radio		//单选框
   :checkbox	//复选框
@@ -107,7 +103,7 @@ javascript框架，是对js的一种封装
   :submit		//提交按钮，以及<buttom type="submit">
   :image		//图片型提交按钮
   :reset		//重置按钮
-  
+  :file		// <input type=file/>
   表单对象属性
   :enabled	//可用的输入元素，输入元素默认可用
   :diabled	//不可用的输入元素
@@ -146,7 +142,7 @@ javascript框架，是对js的一种封装
 
 
 
-* 效果
+* 动画
 
   ```JavaScript
   .show(num);//显示,延时num

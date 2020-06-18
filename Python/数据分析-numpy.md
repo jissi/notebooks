@@ -5,7 +5,7 @@
 ---
 * ***创建numpy数组,生成ndarray对象***
 ```
-  np.array( [1,2,3] , [4,5,6] )
+  np.array( [[1,2,3] , [4,5,6]] )
   
   np.arange(start , end , step) #只有一个参数时该参数为end
   np.linspace(1, 3, 5)   #生成\[1,3)的5个数组成的一维数组
@@ -31,7 +31,7 @@
 ---
 * ***对ndarray对象的操作***
 ```
-arr = np.array([1,2,3],[4,5,6])
+arr = np.array([[1,2,3],[4,5,6]])
 arr.shape#查看数组行列数
 arr.ndim #查看数据维度
 arr.dtype #查看数据类型

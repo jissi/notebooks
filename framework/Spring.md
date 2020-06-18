@@ -401,8 +401,9 @@ OOP：面向对象编程，AOP是OOP的延续而不是替代
      
      <aop:config><!--aop配置-->
          <aop:aspect ref="通知类id"><!--切面配置-->
+             // <aop:pointcut id="切点id" expression="切点表达式"/>
              <aop:before method="通知类中的增强方法"
-                         pointcut="切入点表达式"/><!--定义通知-->
+                         pointcut="切入点表达式"/><!--定义通知--> 或 point-ref=切点id
          </aop:aspect>
      </aop:config>
      ```

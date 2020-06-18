@@ -364,14 +364,57 @@ import my_car #导入整个模块
 
 
 
-### 文件和异常
+### 异常
 
 ```python
-with open('test.txt') as file:
-    content = file.read()
-    print(content)
-    #逐行读取
-    for line in file:
-        print(line)
+#---- 捕获异常
+try:
+	i = 10 / 0
+except ZeroDivisionError as e:
+	print(e.with_traceback)
+    #raise 向上抛出该异常
+finally:
+    print("xxx")
+#---- 抛出异常
+def testExcept(num):
+    if num == 0:
+        raise ValueError("invalid value: %s" %num)
+    else:
+        return 10 /num
 ```
 
+
+
+### IO
+
+```python
+#----- 
+try:
+    f = open("xxx.txt",'r') # 读\写:r/w
+    f.read()
+except IOError as e:
+    pass
+finally:
+    if f: f.close()
+#------ 精简写法，可以不写close和异常
+with open("xxx.txt",'r') as file:
+    file.read(1024)#读1024个字节
+    file.read()#读取所有
+    file.readline()#读一行
+    for line in file.readlines(): #读取所有并按行返回
+        pass
+#---- 操作文件和目录
+import os
+print(os.name)#显示系统类型 posix：类unix，t：windows
+os.path.abspath()#当前绝对路径
+os.mkdir('/home/jissi/temp')#
+os.rmdir("")
+#----- 序列化 pickle模块
+import pickle
+d = dict(name='A',age=20)
+p = pickle.dumps(d)#将对象序列化为bytes
+with open('d.txt','wb') as file:
+    file.write(p)#写入文件
+with open("d.txt",'rb') as file:
+    d = pickle.load(file)
+```

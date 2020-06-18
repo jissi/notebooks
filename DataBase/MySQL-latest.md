@@ -759,8 +759,9 @@ CHECK(gender IN('男','女'))   -- 检查约束，MySQL不支持，使用无效�
  NOT NULL 和 DEFAULT 不可以做表级约束，无效果
  [CONSTRAINT 约束名] 约束类型(字段)
  
- -- 通用写法：只把外键写在表基约束，格式如下
- constraint fk_当前表_主表 foreign key(外键) references 主表(键)
+ -- 通用写法：只把外键写在表级约束，格式如下
+ constraint fk_当前表_主表 foreign key(外键) references 主表(键) 
+ [ON DELETE RESTRCT ON UPDATE CASCADE] -- 删除主表记录时如果有关联则不允许删除，更新主表时有关联记录则级联更新
 ```
 
 
@@ -782,7 +783,7 @@ create table if not exists user(
     
     [contains pk] primary key(id),
     [contains code] unique(code),
-    [contains fk] foreign key(role_id) references role(id)
+    [contains fk] foreign key(role_id) references role(id) 
 )
 ```
 
@@ -1019,7 +1020,7 @@ select 变量；#查看
 
 
 
-### 存储过程和函数
+### 存储过程、函数、触发器
 
 类似于Java中的方法，提高代码重用性，简化操作
 
@@ -1029,7 +1030,7 @@ select 变量；#查看
 
   预先编译好的SQL语句集合，提高代码重用性，简化操作，减少编译次数和连接次数
 
-#### 存储过程
+#### 存储过程 procedure
 
 ##### 创建存储过程
 
@@ -1150,7 +1151,7 @@ DROP PROCEDURE 名称; --一次只能删一个
 
 
 
-#### 函数
+#### 函数 function
 
 与存储过程的区别：返回值
 
@@ -1225,6 +1226,71 @@ drop function 函数名;
 
 ```SQL
 mysql.proc
+```
+
+
+
+#### 触发器 trigger
+
+触发器是与表有关的数据库对象，在insert/update/delete之后触发SQL集合，可以确保数据库的完整性，进行日志记录，数据校验等操作。
+
+MYSQL目前触发器支持行级触发(Oracle还支持SQL级触发)，使用OLD和NEW变量来表示正在操作的数据
+
+| 触发器类型 | NEW 和 OLD 的作用                      |
+| ---------- | -------------------------------------- |
+| INSERT     | NEW 表示将要插入或已经插入的数据       |
+| UPDATE     | OLD表示修改之前的数据，NEW表示修改之后 |
+| DELETE     | OLD表示将要删除或已经删除的数据        |
+
+##### 触发器的创建
+
+```sql
+DELIMITER $ 
+create trigger 触发器名
+before|after insert|update|delete on 表名
+[for each row] -- 显示声明行级触发
+begin
+	一组sql;
+end $
+```
+
+##### 触发器创建示例
+
+```sql
+-- insert 触发 使用new 记录users表插入日志
+DELIMITER $
+CREATE TRIGGER user_insert
+AFTER INSERT ON users
+FOR EACH ROW
+BEGIN
+	insert into user_log(op_type,op_id,op_params)
+		values ('insert',new.id,concat(NEW.codes,':',NEW.role_id));
+END $
+-- update 触发 使用 old 和 new
+delimiter $
+CREATE TRIGGER user_update
+AFTER UPDATE ON users
+FOR EACH ROW
+BEGIN
+	insert into user_log(op_type,op_id,op_params)
+		values ('update',NEW.id,concat(concat(old.codes,':',old.role_id),' to ',concat(new.codes,':',new.role_id)));
+END $
+-- delete 触发 使用old
+delimiter $
+CREATE TRIGGER user_delete
+AFTER DELETE ON users
+FOR EACH ROW
+BEGIN
+	insert into user_log(op_type,op_id,op_params)
+		values ('delete',NEW.id,concat(concat(old.codes,':',old.role_id)));
+END $
+```
+
+##### 查看和删除触发器
+
+```sql
+ show triggers;
+ drop trigger trigger1[,trigger2,..]
 ```
 
 

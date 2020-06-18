@@ -1,5 +1,7 @@
 ### java网络编程
 
+!!! BIO网络通信需要调用 socket.shutdownInput()才能告知服务端发送完毕，否则服务端一直等待客户端发送数据
+
 java.net
 
 网络上的一切都是流

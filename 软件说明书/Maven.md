@@ -48,14 +48,14 @@ POM：项目对象模型；依赖管理模型
   ##### 仓库类型：本地仓库，私服（局域网内仓库），中央仓库（公用）
 
   ```
-  本独仓库不全 -> 有私服？去私服下载：直接去中央下载
+  本地仓库不全 -> 有私服？去私服下载：直接去中央下载
   私服不全 -> 去中央下载
   ```
 
   * ##### 本地仓库配置
 
     ```xml
-    $MAVEM_HOME/cong/settings.xml
+    $MAVEM_HOME/conf/settings.xml
     <settings>
         <localRepository>
             本地仓库路径

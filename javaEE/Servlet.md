@@ -207,7 +207,7 @@ Servlet本身不能运行，需要在一个web应用中运行，web应用部署�
 
 * 客户端跳转：浏览地址改变
 
-  request.sendRedirect(“xxx.html”)
+  response.sendRedirect(“xxx.html”)
 
   直接将目的网址响应给客户端
 
@@ -409,11 +409,11 @@ while(iter.hasNext()){
 
 ### javax.servlet.http.Cookie
 
-<font size=4>每个cookie对象包含一个cookie名和cookie值</font>
+<font size=4>每个cookie对象包含一个cookie名和cookie值</font>，第一次访问服务器器有服务器发给客户端，之后每次请求客户端都会带上cookie
 
 ```java
 Cookie cookie = new Cookie("name","value");
-cookie.setMaxAge(0);//设置cookie有效期，0s即client删除cookie，>0则可以保存到硬盘，<0则只能在当前有效
+cookie.setMaxAge(0);//设置cookie有效期，0s即client删除cookie，>0则可以保存到硬盘，<0则只能在当前有效；默认-1关闭浏览器失效
 response.addCookie(cookie);//将cookie添加到响应结果，发送到客户端
 Cookies[] cookies = request.getCookies();//获取请求中的cookie数组
 cookie.getName();

@@ -497,7 +497,7 @@ SessionFactory作为二级缓存，增强一级缓存Session；默认关闭（�
      * 一方配置文件新增：
 
        ```xml
-       <set name="集合名" casecade="seve-update,delete" inverse="true">
+       <set name="集合名" casecade="save-update,delete" inverse="true">
            <key column="外键名" />
            <one-to-many class="多方类path"/>
        </set>
@@ -528,7 +528,7 @@ SessionFactory作为二级缓存，增强一级缓存Session；默认关闭（�
 
      ```外键维护权默认开启，每次操作，一方和多方都会维护主键，产生两次sql```
 
-     * cascade属性：级联，操作一个对象，自动操作其相关的对象
+     * cascade属性：级联，操作当前对象，自动操作其相关的对象
 
        ```java
        none  不使用级联，默认    

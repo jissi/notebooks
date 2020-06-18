@@ -58,8 +58,8 @@
    PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
    "http://mybatis.org/dtd/mybatis-3-config.dtd">
    <configuration>
-       <enviroments default="development">
-           <enviroment id="development">
+       <environments default="development">
+           <environment id="development">
                <!--使用Jdbc事务管理-->
                <transactionManager type="JDBC"/>
                <!--连接池-->
@@ -68,8 +68,8 @@
                              value="驱动">
                    </property>
                </dataSource>
-           </enviroment>
-       </enviroments>
+           </environment>
+       </environments>
        <!--映射文件-->
        <mappers>
            <mapper resource="映射文件路径"/>
@@ -379,19 +379,54 @@
 
 ***Mybatis拼接查询***，条件查询```select ..from .. where .. and .. or ..```
 
+#### if
+
 ```xml
-<select id parameterType="xxx.User"
-        resultType="xxx.User">
-    select * from Users
-  <!--如果有if能够匹配就自动拼接where ，并省略第一个and-->
-    <where>
-        <!--传入设置了uname属性的user-->
-        <if test="uname != null and uname != ''">
-        	and uname like "%${uname}%"
-        </if>
-    </where>
-</select>
+select * from user where age < 10 
+<if test="username != null">
+	and username < #{username}
+</if>
 ```
+
+#### where
+
+```xml
+select * from user
+<where>//没有匹配的if时，where不执行
+    <if test="username != null">
+        and username = #{username} //where会自动去掉第一个and/or
+    </if>
+</where>
+```
+
+#### choose-when-otherwise
+
+```xml
+select * from user where age < 10
+<choose>
+    <when test="username != null">
+        and username like #{username}
+    </when>
+	<when test="">.....</when>
+	<otherwise>....</otherwise>
+</choose>
+```
+
+#### trim
+
+#### set
+
+```xml
+update user
+<set>
+    <if test="username != null"> username = #{username} ,</if>
+    <if test="age != null"> age = #{age}</if>
+</set>
+```
+
+
+
+#### foreach
 
 ```select * from … where uid in (1,2,5)的拼接方法```
 
@@ -401,7 +436,7 @@
 	select * from Users
     <where>
         <if test="uids != null">
-<!-- in ( 1,2,5 )-->
+            <!-- in ( 1,2,5 )-->
             <foreach collection="要遍历的集合u ids"
                      item="每次遍历的对象 uid"
                      open="in (" 遍历开始时的拼接符
@@ -424,7 +459,7 @@
 <include refid=""/>
 ```
 
-
+* tr
 
 ### 八、关联查询
 

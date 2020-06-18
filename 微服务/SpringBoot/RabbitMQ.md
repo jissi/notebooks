@@ -93,7 +93,7 @@
 
 * broker：消息队列服务器实体
 
-  ![](../resources/img/mq.png)
+  ![](../../resources/img/mq.png)
 
 
 

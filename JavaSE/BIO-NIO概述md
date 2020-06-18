@@ -136,8 +136,6 @@ NIO中一个请求对应一个通道
 
 
 
-![](G:\data\notebooks\resources\img\nio-buffer.png)
-
 
 
 > 常用方法：
