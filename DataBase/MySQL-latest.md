@@ -1,5 +1,7 @@
 MySQL
 
+
+
 [TOC]
 
 ---
@@ -10,7 +12,7 @@ MySQL
 
 ##### DB ：数据库，存储大量数据的仓库
 
-##### DBMS ：数据库管理系统  MySQL就是一种DBMS；常见Oracle(甲骨文)/DB2(IBM)/SQL Server(微软)
+##### DBMS ：数据库管理系统  MySQL就是一种DBMS；常见Oracle/DB2(IBM)/SQL Server(微软)
 
 DBMS分类：基于共享文件系统（Access数据库）；基于C/S架构（MySQL ，Oracle，SQL Server）
 
@@ -187,6 +189,7 @@ SELECT 函数名(实参) [FROM 表 ...]
   truncate(1.65,1);-- 区别于round,从小数点后截断 返回 1.6
   mod(100,98)；-- 取模/取余  SQL或JAVA中运算一样：mod(a,b) == a - a/b*b
   rand(); -- 产生[0-1)之间的随机小数
+  ifnull(a.name,'hahha'); -- 如果为空，填充为指定内容
   ```
 
   
@@ -445,7 +448,7 @@ group by type,age; -- 将type和age都相同的放在一组
      SELECT * FROM A a WHERE a.id = (select id from b where id = 2);
      -- 列/多行子查询
      SELECT * FROM A a WHERE a.id = ANY(select id from B);
-     等价于 select * from A a where a.id = select min(id) from B
+     等价于 select * from A a where a.id > select min(id) from B
      -- 行子查询 ：取代 where id = 子查询 AND age = 子查询  要求比较符相同
      SELECT * FROM A WHERE (id,age) = (SELECT MIN(id),MIN(age) FROM A)
      ```
@@ -465,7 +468,7 @@ group by type,age; -- 将type和age都相同的放在一组
      (SELECT user u INNER JOIN role r WHERE u.role_id = r.id) as t
      ```
 
-  4. existes 后 表子查询  ，相关子查询
+  4. exists 后 表子查询  ，相关子查询
 
      ```SQL
      EXISTS 返回boolean类型的值，表子查询有结果就为1，没有返回0
@@ -505,7 +508,7 @@ limit 10,15
 将多个查询结果合并成一个结果；要查询的结果来自多个表，且要查询的信息一样
 
 ```SQL
-查询语句1 UNION 查询语句2 -- 默认去重
+查询语句1 UNION 查询语句2 -- 默认去重, 已知联合结果无重复时应当使用union all 提高效率
 查询语句1 UNION ALL 查询语句2 -- 不去重
 -- 注意事项
 每个查询语句的 查询列数一致，
@@ -673,7 +676,7 @@ alter table user modify column cTime timestamp;
 	int/integer 4字节；bigint 8字节
 	-- 默认有符号,设置无符号
 ALTER TABLE book MODIFY COLUMN id INT UNSIGNED;-- 设置无符号
-ALTER TABLE book MODIFY COLUMN id INT ZEROFiLL;-- 设置使用0填充，默认为无符号
+ALTER TABLE book MODIFY COLUMN id INT ZEROFILL;-- 设置使用0填充，默认为无符号
     /*
     数值超出范围 报 out of range ，并插入临界值
     默认设置了长度，实际长度由类型决定，手动指定的长度表示显示时的宽度
@@ -750,7 +753,7 @@ DEFAULT 值  -- 默认值约束，该字段有默认值
 PRIMARY KEY -- 主键约束，保证该字段唯一且非空，一张表只能有一个主键，支持联合主键
 UNIQUE   -- 唯一约束，只能有一个空，支持联合unique(列1，列2)
 -- 外键约束，限制两表关系，在从表添加该约束，用于引用主表字段的值
-FOREIGN KEY(列名) REFERENCES 主表(键) 
+FOREIGN KEY(外键列明) REFERENCES 主表(键) 
 CHECK(gender IN('男','女'))   -- 检查约束，MySQL不支持，使用无效果
 
 -- 列级约束：写在字段类型后
@@ -1063,7 +1066,7 @@ CALL 名称()$ -- 也要加结束符号
     INOUT 既可以作为输入也可以输出，既需要传值，也要返回
     ```
 
-  * 存储过程只有一句话是 begin end可以省略
+  * 存储过程只有一句话时 begin end可以省略
 
   * 每个SQL语句要以分号结尾
 
@@ -1102,11 +1105,11 @@ CALL 名称()$ -- 也要加结束符号
   create procedure checkAcc(in name varchar(20))
   begin
   	declare result int default 0;-- 声明变量并初始化
-  	-- set @result=0;--或使用用户变量
+  	-- set @result=0;--使用用户变量
   	select count(*) into result -- 将查询结果赋值给变量 select into
   	from account a
   	where a.name = name;
-  	select IF(result != 0,'存在用户','该用吧不存在') info;-- 打印结果
+  	select IF(result != 0,'存在用户','该用户不存在') info;-- 打印结果
   end $
   call checkAcc('Abi')$
   ```
@@ -1282,7 +1285,7 @@ AFTER DELETE ON users
 FOR EACH ROW
 BEGIN
 	insert into user_log(op_type,op_id,op_params)
-		values ('delete',NEW.id,concat(concat(old.codes,':',old.role_id)));
+		values ('delete',old.id,concat(concat(old.codes,':',old.role_id)));
 END $
 ```
 
@@ -1357,7 +1360,7 @@ select if(条件语句，表达式1，表达式2);-- 满足条件返回表达式
      delimiler $
      create function rich_level(money double) returns varchar(20)
      begin 
-     	set @rl = '';
+     	set @rl = '';-- declare rl varchar(20) default '';
      	case
      		when money <= 10 then set @rl='TuBie';
      		when money between 50 and 100 then set @rl='middle';
@@ -1488,7 +1491,7 @@ select if(条件语句，表达式1，表达式2);-- 满足条件返回表达式
 | ------ | -------------------------------------------------- | ------------ |
 | while  | tag:while 条件 do 循环体; end while tag;           | 先判断后执行 |
 | loop   | tag:loop 循环体; end loop tag;                     | 死循环       |
-| repeat | tag:repeat 循环体; until 结束条件; end repear tag; | 先执行再判断 |
+| repeat | tag:repeat 循环体; until 结束条件; end repeat tag; | 先执行再判断 |
 
 
 
@@ -1520,7 +1523,31 @@ end $
 
 
 
+### 数据备份与恢复
 
+##### 备份数据
+
+```shell
+# 备份所有数据库
+mysqldump -u jissi -p -h localhost --all-databases > all.sql
+# 备份单个数据库
+mysqldump -u jissi -p -h localhost --databases Demo > demo.sql
+# 备份数据库中的指定表
+mysqldump -ujissi -p -hlocalhost Demo user role > user-role.sql
+```
+
+
+
+##### 恢复数据(执行sql文件)
+
+```shell
+mysql -u jissi -p -h localhost < demo.sql
+# 执行sql脚本
+# 未登录数据库
+mysql -u jissi -p xxx -Ddemo < /home/sql.sql # -Ddemo 表示数据库
+#已登陆数据库
+source /home/sql.sql
+```
 
 
 

@@ -310,7 +310,7 @@ spring:
 
 导入依赖：spring-cloud-starter-netflix-zuul
 
-主启动类加 @EnableZuulProxy
+主启动类加 @EnableZuulProxy   （@EurekaClient不用写了）
 
 配置文件中设置端口、服务名、eureka等
 
@@ -322,10 +322,21 @@ application.yml
 
 ```yml
 zuul:
-  prefix: /test #同一访问前缀
+  prefix: /test #统一访问前缀
   ignored-services: provider-dept #忽略指定服务名(不再允许使用服务名访问)，忽略所有使用 "*" 包括引号
+  
+  #通过uri实习路由
+  routes: #定义路由
+  	dept-service:
+  		path: /dept/**  #访问时必须带上/dep/前缀
+  		url: http://127.0.0.1:8080  
+  
+  #结合eureka实现路由
   routes:
-    dept.serviceId: provider-dept #微服务应用名
-    dept.path: /dept/** #映射/访问路径
+  	provider-dept: /dept/** #直接 使用服务名: 访问前缀
+  	# 或者单独指定
+    dept-service: #路由名，随意
+    	serviceId: provider-dept #微服务应用名
+    	path: /dept/** #映射/访问路径   访问时必须带上/dep/前缀
 ```
 

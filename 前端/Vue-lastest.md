@@ -322,6 +322,15 @@ Vue.filter('过滤器名',function(value){
 
   ```shell
   <script src="https://unpkg.com/vue-router/dist/vue-router.js"></script>
+  
+  # 路由跳转
+  <router-link to="/mail"/>
+  this.$router.push("/mail")
+  this.$router.push({name:'/mail',query:{id:1}} ) # 类似get请求  取参数：this.$route.query.id
+  this.$router.push( {path:'/mail'},query:{id:1} )
+  this.$router.push( {name:'/mail'},params:{id:1} ) # 类似post
+  this.$router.replace() # 用法与push类型
+  this.$router.go( n ) #向前向后跳转
   ```
 
 * 使用路由
@@ -405,6 +414,7 @@ Vue.filter('过滤器名',function(value){
   	method: "get",
   	url:`${this.baseURL}/GetAll`,
   	headers: {Account: "Admin",Password:"123456"}
+      data:{}
   })
   .then((response)=> {
   	console.log(response)
@@ -457,7 +467,14 @@ assets
       </div>
   </template>
   <script>
-      export default
+      export default{
+          data(){
+              return{
+                  info:'info'
+              }
+          },
+          methods:{}
+      }
   </script>
   ```
 
@@ -514,7 +531,6 @@ assets
      import '../node_modules/semantic-ui-css/semantic.min.css'
      ```
 
-     
-
-
+  
+  
 

@@ -74,7 +74,7 @@ Array     数组 x = [1,2,3] <==> x = new Array(1,2,3)
 !== 绝对不等于
 
 ？: 三目运算符,有三个操作数，第一个为true就返回第二个，否则返回第三
-1<2?1:0  返回1
+1<2?1:0  返回1	
 ```
 
 变量类型判断：```typeof 变量名```
@@ -87,7 +87,7 @@ Number.MIN_VALUE //返回Number支持的最小值
 toFixed(x);//返回小数表达
 toExponential(x);//返回科学计数表达
 isNan(x);//x是否为NaN
-valueOf(x);//返回基本类型
+valueOf(x);//返回基本类型 
 typleof x;//返回数据类型Object
 ```
 
@@ -98,7 +98,7 @@ var s = 'str';或 var s = new String("str");//创建String对象
 !!! 字符串是不可变的,给指定索引赋值不会报错，但没有效果
 s.length;//返回字符串长度
 s.charAt(0); <==> s[0]//返回指定位置的字符
-s.charCodeAt(0);//返回指定位置的字符对应的Unicode码
+s.charCodeAt(0);//返回指定位置的字符对应的Unico de码
 s.concat("str");//返回字符串拼接后的字符串
 s.indexOf("a")/lastIndexOf("a");//返回子串出现的位置 -1表示没有
 s.localeCompare("str");//返回两字符串是否相同，0相同
@@ -112,7 +112,7 @@ var t = 'abc ${s}';//应用字符串s ES6支持
 使用 \ 转义字符 :
           \\ -> \
           \n -> 换行
-          \t -> 制表
+          \t -> 制表 
 ```
 
 ##### Array
@@ -177,7 +177,7 @@ a.toString();//默认转十进制
 a.toString(16);//转16进制
 
 转为数字
-parseInt("str"),parseFloat("str");//转数字
+parseInt("str"),parseFloat("str");//转数字 
 //以数字开头就返回数字，非数字开头返回NaN
 Number("123");//转数字，包含非数字返回NaN(Not a Number)
 //字符串转数字 "10abc8" -> 10

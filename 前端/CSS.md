@@ -1,4 +1,6 @@
-CSS
+### CSS
+
+[TOC]
 
 分层设计，css将颜色，大小，位置等信息都写到\<style>中，html只需关心提供什么样的内容
 
@@ -10,7 +12,7 @@ CSS
 <link rel="stylesheet" type="text/css" href="path" />
 ```
 
-##### 优先级问题
+#### 优先级问题
 
 ```css
 外部css文件与html内style标签冲突，优先使用最后出现的样式；
@@ -198,7 +200,7 @@ p{
 
 ----
 
-##### 布局
+#### 布局
 
 * 绝对定位（参照最近的一个定位过的父容器）
 
@@ -263,3 +265,88 @@ p{
   ```
 
   
+
+#### Flex布局
+
+* flex基本原则
+
+  ```css
+  默认主轴方向以及交叉轴方向，两轴的起点是公共交点
+  所有属性都是依据主轴交叉轴配置
+  -----------主轴---------->
+  |
+  |
+  交叉轴，向下
+  |
+  ```
+
+* 将外层元素的display：flex 即可声明该元素为flex容器
+
+* 属性
+
+  * 主轴方向
+
+    ```css
+    flex-direction: row; 默认，主轴为横轴，向右  |-
+    				row-reverse; 水平主轴从右向左，交叉轴 -|
+    				column; 主轴为纵轴，水平向下，交叉轴为水平轴 |-
+    				column-reverse;主轴纵轴，向上 |-
+    ```
+
+  * 沿主轴的子元素排列
+
+    ```css
+    flex-wrap:wrap;沿着主轴排列，超过主轴时换行
+    		  wrap-revese;换行后反向排列
+    		  nowrap;不换行
+    ```
+
+  * flex-flow <==> flex-direction + flex-wrap
+
+    ```css
+    flex-flow:row wrap;
+    ```
+
+  * 缩放
+
+    ```css
+    flex-shrink:1;默认，当容器大小不够，又没有设置换行时，默认该元素等比例缩小
+    flex-grow:0;默认，当容器大小有多余空间时，该元素不放大
+    ```
+
+  * 固定元素尺寸
+
+    ```css
+    flex-basis: 0;该元素在 主轴 上的初始尺寸 ,当主轴是纵轴是类似与 height
+    与width/height的区别
+    width:0;元素不显示
+    flex-basis:0;按照实际所需大小显示
+    width与flex-basis不为0时，效果一致，默认flex-basis优先级高，除非flex-basis=auto
+    
+    flex <==> flex-grow + flex-shrink + flex-basis
+    flex:3 1 0
+    ```
+
+  * 对齐
+
+    ```css
+    主轴对齐方式
+    justify-content: flex-start;沿主轴起点对齐
+    				 flex-end;
+    				 center;
+    				 space-between;
+    				 space-around;
+    交叉轴对齐方式，
+    align-items: stretch; 默认，该元素没有尺寸时在垂直方向填满
+    			 flex-start;沿交叉轴起点对齐
+    			 flex-end;
+    			 baseLine;沿第一行文字对齐
+    ```
+
+  * 排序
+
+    ```css
+    order:2; 该元素排在第二个位置
+    ```
+
+    

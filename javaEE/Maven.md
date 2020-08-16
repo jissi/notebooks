@@ -191,8 +191,7 @@ source /etc/profile
   </dependencies>
   ```
 
-
-### 父子聚合
+### 八、父子聚合
 
 * 父子-聚合项目
 
@@ -227,4 +226,17 @@ source /etc/profile
   相同的方法创建Maven项目，子项目位于父项目目录下
   ```
 
-  
+
+
+
+### 九、使用笔记
+
+#### 指定编译版本
+
+```xml
+<properties>
+    <maven.compiler.source>1.8</maven.compiler.source>
+    <maven.compiler.target>1.8</maven.compiler.target>
+</properties>
+```
+
